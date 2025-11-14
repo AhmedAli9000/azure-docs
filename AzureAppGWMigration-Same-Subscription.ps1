@@ -880,13 +880,22 @@ $Rules | ForEach-Object {
   # Get WAF Policy to use it in deploying
   if ($null -ne $wafPolicyId ) {
    $wafPolicy = Get-AzApplicationGatewayFirewallPolicy -Name $wafPolicynameforcreation -ResourceGroupName $wafpolicyresourcegroup
-   Write-Host -ForegroundColor Green "`nFound WAF Policy 'Same Subscription scenario'."
+   Write-Host -ForegroundColor Green "`nFound WAF Policy 'Same Subscription scenario - Same region'."
  }else {
  Write-Host -ForegroundColor Yellow "`nNo WAF Policy 'Same Subscription scenario'."
  } 
+
+# Add an option to create new WAF Policy if deployment cross regions
+if ($sourceAppGwlocation -ne $destinationlocation) {
+  $wafPolicyId = $null
+  Write-Host  "`r `n "
+  Write-Host -ForegroundColor Yellow "`nSource Application Gateway location is different than the destination location."
+  Write-Host -ForegroundColor Yellow "`nWAF Policy must be created in the destination location."
+}
  
  # Original Block
  if ($null -eq $wafPolicyId) {
+
   Write-Host -ForegroundColor Green "`nCreating WAF Policy..."
    $policy = New-AzApplicationGatewayFirewallPolicySetting -Mode "Detection"
  
